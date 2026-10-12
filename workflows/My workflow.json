@@ -1,0 +1,337 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -48
+      ],
+      "id": "5eae4834-0bed-42af-8b9f-74dcc5a7b27c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1P2IFBSwGQLow7HFUWC9JTkCCRyMS0WFysBBL9P-cNxA",
+          "mode": "list",
+          "cachedResultName": "Lakshay India Chatbot - Enquiry Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1P2IFBSwGQLow7HFUWC9JTkCCRyMS0WFysBBL9P-cNxA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1P2IFBSwGQLow7HFUWC9JTkCCRyMS0WFysBBL9P-cNxA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "2026-10-11T12:00:00Z",
+            "name": "Test User",
+            "message": "What services do you offer?",
+            "reply": "This is a test enquiry from n8n.",
+            "course_interest": "Career counselling",
+            "lead_status": "New",
+            "answer_found": "true",
+            "tokens_in": "10",
+            "tokens_out": "20",
+            "latency_ms": "500"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply",
+              "displayName": "reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "course_interest",
+              "displayName": "course_interest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_status",
+              "displayName": "lead_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "answer_found",
+              "displayName": "answer_found",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_in",
+              "displayName": "tokens_in",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_out",
+              "displayName": "tokens_out",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "latency_ms",
+              "displayName": "latency_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        -48
+      ],
+      "id": "a7d8efa5-a962-4b84-9526-49118afa1ec1",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdpMo9f3PVK7Yrb2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        176,
+        -80
+      ],
+      "id": "50071d35-19b7-49f5-8422-b4df674aeab7",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "uRFnNLdaUqkXNqh2",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        128
+      ],
+      "id": "eb201bb6-a6cc-4fc1-aca5-02f342df2c46",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TGrmox5IjUvN2OeT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.faq }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        128
+      ],
+      "id": "845ad4e1-bdb5-446b-9eb4-91d120772c0a",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 800,
+        "chunkOverlap": 80,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        432,
+        272
+      ],
+      "id": "b325d1a4-502c-49f7-b84f-589457960d6f",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "jsCode": "   const faq = `## About the company\n\n**Q: What is Lakshay India?**\nA: A career guidance and mentorship organization that helps students, parents and institutions plan future careers. (Source: About Us page)\n\n**Q: What services does Lakshay India offer?**\nA: Personalized career counselling and assessments, global career pathway programs, admission assistance for top Indian and international institutions, skill development workshops and certifications, and corporate mentorship and industry networking. (Source: About Us page)\n\n**Q: How many careers does Lakshay India cover?**\nA: The home and About pages say 50+ high-profile careers. The For Students page mentions career blueprints for 100+ professions. Fields include engineering, medicine, law, business leadership, artificial intelligence, space sciences and aviation. (Source: Home, About Us, For Students)\n\n**Q: How many students and parents has Lakshay India worked with?**\nA: The home page shows 2200+ students enrolled, 1700+ parents mentored and 250+ coaches mapped. (Source: Home page)\n\n**Q: Which countries does Lakshay India support?**\nA: The About page says career support is available in 6+ countries. The contact page lists phone numbers for Sydney, Auckland, London and New York. (Source: About Us, Contact)\n\n**Q: What is Lakshay India's mission?**\nA: To help every student realize their potential and pursue careers that are fulfilling, future-ready and globally respected. (Source: About Us page)\n\n## For students\n\n**Q: How does Lakshay India help students?**\nA: It uses career assessments and one-on-one counselling to find careers that fit a student's interests and strengths, then gives step-by-step roadmaps covering schools, courses, exams, universities and internships. Students also get mentorship from career coaches, workshops, aptitude testing, personality analysis and goal-setting sessions. (Source: For Students page)\n\n**Q: Which careers have roadmaps?**\nA: Examples on the website include pilot, astronaut, AI researcher, space scientist, chief financial officer, cardiothoracic surgeon, gaming director, Supreme Court lawyer and Ivy League scholar, among many others. The home page also lists careers such as Chief Data Officer, AI/ML Automation Engineer and Director of Cyber Security. (Source: For Students, Home)\n\n**Q: Is the support one-time or long-term?**\nA: The For Students page describes lifetime career support rather than a single consultation, with real-time tracking of progress. (Source: For Students page)\n\n**Q: What does a career page include?**\nA: Each career page explains who the professional is and gives a step-by-step guide, from school subjects and exams to training, jobs and global opportunities, with notes on how Lakshay India supports each step. For example, the Senior Captain page covers schooling, the commercial pilot license, type rating, airline roles and global airline requirements. (Source: Career pages, e.g. Senior Captain)\n\n## For parents\n\n**Q: How does Lakshay India help parents?**\nA: It builds a personalized roadmap from the child's interests, aptitude, skills and academic performance, offers lifetime access to career mentors, keeps parents involved at key milestones, and runs workshops and webinars for parents. (Source: For Parents page)\n\n**Q: Can parents track their child's progress?**\nA: Yes. The website describes an interactive dashboard where parents can see goals, timelines, achievements and action plans. (Source: For Parents page)\n\n## For institutions\n\n**Q: Does Lakshay India work with schools and colleges?**\nA: Yes. It partners with schools (CBSE, ICSE, IB and state boards), colleges, universities and professional training institutes. Programs can start as early as Grade 8. (Source: For Institution page)\n\n**Q: What do institutions get?**\nA: Career integration in the academic curriculum, on-campus Career Guidance Cells run by Lakshay India counselors, workshops and webinars, dashboards that track student interests and progress, and training for faculty and counselors. (Source: For Institution page)\n\n## Pricing and enrollment\n\n**Q: How much do the career programs cost?**\nA: The career listings on the home page show two prices side by side, ₹100,000 and ₹250,000. The page does not say what each price means or exactly what is included, so please confirm the current price with the team. (Source: Home page)\n\n**Q: How do I enroll?**\nA: Each career page has an Enroll Now button. You can also message the team on WhatsApp at +91 9910115251 or use the contact form. (Source: Home page, Contact)\n\n## Contact\n\n**Q: How can I contact Lakshay India?**\nA: Call or WhatsApp +91 9910115251. Student support email is students@lakshayindia.com. The contact form has topics for Sales, Billing, HR, Help Desk and Other. (Source: Contact page)\n\n**Q: Where is the office?**\nA: The contact page lists DLF CyberHub, DLF Cyber City, Sector 24, Gurugram, Haryana. (Source: Contact page)\n\n**Q: Where can I see videos and updates?**\nA: On the Lakshay India YouTube channel (@lakshayindiaofficial), Instagram (lakshayindia), Facebook (lakshayindiaofficial) and the WhatsApp channel linked in the website footer. There is also a Blog section. (Source: Website footer)\n\n## Refunds and cancellation\n\n**Q: Can I cancel my enrollment?**\nA: Before enrollment is confirmed and payment is processed, you will not be charged. After enrollment is confirmed and services are scheduled, cancellation and refunds are generally not permitted, except in special cases the company decides. (Source: Refund and Cancellation Policy)\n\n**Q: When is a refund possible?**\nA: Only in exceptional cases, such as a service not delivered within 30 days of the promised schedule without prior communication, or a verified technical error like a double payment. Fees for counselling, mentorship, webinars, workshops and digital materials are otherwise non-refundable once enrollment is confirmed. (Source: Refund and Cancellation Policy)\n\n**Q: How do I request a refund?**\nA: Email support@lakshayindia.com with the subject \"Cancellation/Refund Request - [Your Full Name]\", and include your transaction ID, program name and reason. The team reviews requests within 5-7 working days, and approved refunds are processed within 15 working days to the original payment method. (Source: Refund and Cancellation Policy)\n`;\n   return [{ json: { faq } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "ad2e5c41-5433-4864-8894-1b877b5710e6",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "12e3aed2-116c-46bf-89e8-33128233a9d3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1b5e9fe20569d633d8bac8c5bccb559245e81cde2b9d0bcf417e4af08ef721b8"
+  },
+  "nodeGroups": [],
+  "id": "kkeQC8gI07EPk7pJ",
+  "tags": []
+}

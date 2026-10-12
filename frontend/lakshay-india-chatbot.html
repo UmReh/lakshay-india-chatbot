@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lakshay India Assistant (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3F6;--ink:#14262E;--muted:#5A6C75;--teal:#0E5566;--teal-d:#0A3F4C;--saffron:#E8872B;--line:#D3DEE4;--card:#FFFFFF;--bot:#FFFFFF;--err:#A33A2A}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:clamp(12px,3vw,32px)}
+.wrap{width:100%;max-width:760px;display:flex;flex-direction:column;flex:1;min-height:0}
+header{padding:4px 4px 18px}
+h1{font:700 clamp(28px,5vw,40px)/1.1 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 8px;color:var(--teal-d);letter-spacing:-.01em}
+header p{margin:0;color:var(--muted);max-width:56ch}
+.chat{flex:1;min-height:420px;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.notice{display:none;background:#FFF4E5;border-bottom:1px solid #F2D3A6;color:#6B3F0A;padding:10px 16px;font-size:14px}
+.notice.on{display:block}
+.log{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:82%;padding:10px 14px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.bot{align-self:flex-start;background:var(--bot);border:1px solid var(--line);border-top-left-radius:4px}
+.msg.user{align-self:flex-end;background:var(--teal);color:#fff;border-top-right-radius:4px}
+.msg.err{border-color:var(--err);color:var(--err)}
+.typing{display:flex;gap:5px;padding:14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 12px}
+.chips button{font:inherit;font-size:14px;background:#fff;border:1px solid var(--line);color:var(--teal-d);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chips button:hover{border-color:var(--teal)}
+form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#F8FAFB}
+input{flex:1;font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);min-width:0}
+button.send{font:inherit;font-weight:600;background:var(--saffron);color:#2B1700;border:0;padding:0 20px;border-radius:10px;cursor:pointer}
+button.send:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+footer{color:var(--muted);font-size:13px;padding:12px 4px 0}
+@media (prefers-reduced-motion:reduce){.typing i{animation:none;opacity:.6}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Lakshay India Assistant</h1>
+    <p>Ask about career counselling, programs and how to get started. Answers come from the information published on the Lakshay India website.</p>
+  </header>
+  <section class="chat" aria-label="Chat">
+    <div id="notice" class="notice" role="status">Not connected yet. Open this file and set WEBHOOK_URL to your n8n webhook address.</div>
+    <div id="log" class="log" role="log" aria-live="polite"></div>
+    <div id="chips" class="chips"></div>
+    <form id="form" autocomplete="off">
+      <input id="input" type="text" placeholder="Type your question" aria-label="Your question" maxlength="500" required>
+      <button class="send" id="send" type="submit">Send</button>
+    </form>
+  </section>
+  <footer>Unofficial demo built by Umer Rehman. Not an official Lakshay India product.</footer>
+</div>
+<script>
+/* Set this to your n8n production webhook URL, for example http://localhost:5678/webhook/enquiry
+   In the n8n Webhook node, set Allowed Origins (CORS) so this page may call it.
+   n8n should reply with JSON containing a "reply" field. */
+const WEBHOOK_URL = "https://tutorials-sunday-him-ground.trycloudflare.com/webhook/enquiry";
+
+
+const SUGGESTIONS = ["What services do you offer?", "How do you help parents?", "What is your refund policy?"];
+const sessionId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+const log = document.getElementById("log"), form = document.getElementById("form"),
+      input = document.getElementById("input"), send = document.getElementById("send"),
+      chips = document.getElementById("chips"), notice = document.getElementById("notice");
+
+if (!WEBHOOK_URL) notice.classList.add("on");
+
+function add(text, who, extra) {
+  const d = document.createElement("div");
+  d.className = "msg " + who + (extra ? " " + extra : "");
+  d.textContent = text;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+
+function typing() {
+  const d = document.createElement("div");
+  d.className = "msg bot typing";
+  d.setAttribute("aria-label", "Assistant is typing");
+  d.innerHTML = "<i></i><i></i><i></i>";
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+
+async function ask(text) {
+  chips.innerHTML = "";
+  add(text, "user");
+  send.disabled = true;
+  const t = typing();
+  try {
+    if (!WEBHOOK_URL) throw new Error("not-configured");
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: sessionId, message: text })
+    });
+    if (!res.ok) throw new Error("http-" + res.status);
+    const data = await res.json();
+    const reply = data.reply || data.output || data.text;
+    if (!reply) throw new Error("empty");
+    t.remove();
+    add(reply, "bot");
+  } catch (e) {
+    t.remove();
+    const msg = e.message === "not-configured"
+      ? "This page is not connected to a workflow yet. Set WEBHOOK_URL in the page source."
+      : "I could not reach the assistant. Check that n8n is running, the workflow is active, and CORS allows this page.";
+    add(msg, "bot", "err");
+  } finally {
+    send.disabled = false;
+    input.focus();
+  }
+}
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const v = input.value.trim();
+  if (!v) return;
+  input.value = "";
+  ask(v);
+});
+
+add("Hi, I can answer questions about Lakshay India's career counselling services. What would you like to know?", "bot");
+SUGGESTIONS.forEach(function (s) {
+  const b = document.createElement("button");
+  b.type = "button"; b.textContent = s;
+  b.addEventListener("click", function () { ask(s); });
+  chips.appendChild(b);
+});
+</script>
+</body>
+</html>
