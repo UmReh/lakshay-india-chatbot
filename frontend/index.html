@@ -47,7 +47,7 @@ footer{color:var(--muted);font-size:13px;padding:12px 4px 0}
     <p>Ask about career counselling, programs and how to get started. Answers come from the information published on the Lakshay India website.</p>
   </header>
   <section class="chat" aria-label="Chat">
-    <div id="notice" class="notice" role="status">Not connected yet. Open this file and set WEBHOOK_URL to your n8n webhook address.</div>
+    <div id="notice" class="notice" role="status">Not connected yet. Set WEBHOOK_URL in the page source, or add ?api=YOUR_N8N_WEBHOOK_URL to this page address.</div>
     <div id="log" class="log" role="log" aria-live="polite"></div>
     <div id="chips" class="chips"></div>
     <form id="form" autocomplete="off">
@@ -61,8 +61,10 @@ footer{color:var(--muted);font-size:13px;padding:12px 4px 0}
 /* Set this to your n8n production webhook URL, for example http://localhost:5678/webhook/enquiry
    In the n8n Webhook node, set Allowed Origins (CORS) so this page may call it.
    n8n should reply with JSON containing a "reply" field. */
-const WEBHOOK_URL = "https://tutorials-sunday-him-ground.trycloudflare.com/webhook/enquiry";
-
+const WEBHOOK_URL = "";
+/* Alternative: leave WEBHOOK_URL empty and open this page as  index.html?api=https://YOUR-TUNNEL/webhook/enquiry
+   so the endpoint never has to be committed to a public repository. */
+const API_URL = WEBHOOK_URL || new URLSearchParams(location.search).get("api") || "";
 
 const SUGGESTIONS = ["What services do you offer?", "How do you help parents?", "What is your refund policy?"];
 const sessionId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
@@ -70,7 +72,7 @@ const log = document.getElementById("log"), form = document.getElementById("form
       input = document.getElementById("input"), send = document.getElementById("send"),
       chips = document.getElementById("chips"), notice = document.getElementById("notice");
 
-if (!WEBHOOK_URL) notice.classList.add("on");
+if (!API_URL) notice.classList.add("on");
 
 function add(text, who, extra) {
   const d = document.createElement("div");
@@ -97,10 +99,10 @@ async function ask(text) {
   send.disabled = true;
   const t = typing();
   try {
-    if (!WEBHOOK_URL) throw new Error("not-configured");
-    const res = await fetch(WEBHOOK_URL, {
+    if (!API_URL) throw new Error("not-configured");
+    const res = await fetch(API_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
       body: JSON.stringify({ sessionId: sessionId, message: text })
     });
     if (!res.ok) throw new Error("http-" + res.status);
@@ -112,7 +114,7 @@ async function ask(text) {
   } catch (e) {
     t.remove();
     const msg = e.message === "not-configured"
-      ? "This page is not connected to a workflow yet. Set WEBHOOK_URL in the page source."
+      ? "This page is not connected to a workflow yet. Set WEBHOOK_URL in the page source, or add ?api=YOUR_N8N_WEBHOOK_URL to the page address."
       : "I could not reach the assistant. Check that n8n is running, the workflow is active, and CORS allows this page.";
     add(msg, "bot", "err");
   } finally {
