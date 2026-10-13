@@ -61,7 +61,7 @@ footer{color:var(--muted);font-size:13px;padding:12px 4px 0}
 /* Set this to your n8n production webhook URL, for example http://localhost:5678/webhook/enquiry
    In the n8n Webhook node, set Allowed Origins (CORS) so this page may call it.
    n8n should reply with JSON containing a "reply" field. */
-const WEBHOOK_URL = "";
+const WEBHOOK_URL = "https://payment-emperor-isa-selecting.trycloudflare.com/webhook/enquiry";
 /* Alternative: leave WEBHOOK_URL empty and open this page as  index.html?api=https://YOUR-TUNNEL/webhook/enquiry
    so the endpoint never has to be committed to a public repository. */
 const API_URL = WEBHOOK_URL || new URLSearchParams(location.search).get("api") || "";
